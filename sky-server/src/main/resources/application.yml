@@ -12,27 +12,36 @@ spring:
       url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${sky.datasource.username}
       password: ${sky.datasource.password}
-      # 检测连接是否有效（SQL查询语句，MySQL可用此语句）
-      validation-query: SELECT 1
-      # 申请连接时检测（建议开启）
-      test-on-borrow: false
-      # 归还连接时检测（建议关闭，影响性能）
-      test-on-return: false
-      # 连接空闲时检测（核心配置，定期检查闲置连接）
-      test-while-idle: true
-      # 空闲连接检测周期（毫秒，建议30000=30秒）
-      time-between-eviction-runs-millis: 30000
-      # 连接最小空闲时间（毫秒，建议600000=10分钟）
-      min-evictable-idle-time-millis: 600000
-      # 连接最大空闲时间（毫秒，建议1800000=30分钟）
-      max-evictable-idle-time-millis: 1800000
+
+      # 连接池配置
+      initial-size: 5                # 初始化连接数
+      max-active: 15                 # 最大连接数
+      min-idle: 5                    # 最小空闲连接数
+      max-wait: 60000                # 获取连接时的最大等待时间(毫秒)
+
+      # 连接有效性检测
+      validation-query: SELECT 1     # 验证连接是否有效的SQL
+      validation-query-timeout: 5000 # 验证查询超时时间
+      test-on-borrow: true           # 获取连接时验证
+      test-while-idle: true          # 空闲时验证
+      test-on-return: false          # 归还连接时不验证
+
+      # 空闲连接回收
+      time-between-eviction-runs-millis: 60000      # 空闲连接检测间隔(毫秒)
+      min-evictable-idle-time-millis: 300000        # 连接最小空闲时间(毫秒)
+      max-evictable-idle-time-millis: 1800000       # 连接最大空闲时间(毫秒)
+
+      # 启用连接池监控（可选）
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: admin
 
 mybatis:
-  #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.sky.entity
   configuration:
-    #开启驼峰命名
     map-underscore-to-camel-case: true
 
 logging:
@@ -45,9 +54,6 @@ logging:
 
 sky:
   jwt:
-    # 设置jwt签名加密时使用的秘钥
     admin-secret-key: itcast
-    # 设置jwt过期时间
     admin-ttl: 7200000
-    # 设置前端传递过来的令牌名称
     admin-token-name: token
