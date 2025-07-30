@@ -98,4 +98,12 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    @PostMapping("/status/{status}")
+    @ApiOperation("员工账号状态修改")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("员工账号状态修改,员工id为:" + id + "，状态为:" + status);
+        employeeService.startOrStop(status, id);
+        return Result.success();
+    }
+
 }
