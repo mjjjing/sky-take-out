@@ -37,8 +37,8 @@ public class EmployeeController {
     /**
      * 登录
      *
-     * @param employeeLoginDTO
-     * @return
+     * @param employeeLoginDTO 登录信息
+     * @return 登录结果
      */
     @PostMapping("/login")
     @ApiOperation(value = "员工登录")
@@ -68,7 +68,7 @@ public class EmployeeController {
     /**
      * 退出
      *
-     * @return
+     * @return Result
      */
     @PostMapping("/logout")
     @ApiOperation(value = "员工退出")
@@ -78,8 +78,8 @@ public class EmployeeController {
 
     /**
      * 新增员工
-     * @param employeeDTO
-     * @return
+     * @param employeeDTO 员工信息
+     * @return Result
      */
     @PostMapping
     @ApiOperation(value = "添加员工")
@@ -90,6 +90,11 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 分页查询
+     * @param employeePageQueryDTO 查询参数
+     * @return Result
+     */
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
@@ -98,11 +103,38 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    /**
+     * 启用禁用员工账号
+     * @param status 1启用 0禁用
+     * @param id 员工id
+     * @return Result
+     */
     @PostMapping("/status/{status}")
     @ApiOperation("员工账号状态修改")
     public Result startOrStop(@PathVariable Integer status, Long id){
         log.info("员工账号状态修改,员工id为:" + id + "，状态为:" + status);
         employeeService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id 员工id
+     * @return Result
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工信息")
+    public Result<Employee> getById(@PathVariable Long id){
+        log.info("查询员工信息,员工id为:" + id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("员工信息修改:" + employeeDTO);
+        employeeService.update(employeeDTO);
         return Result.success();
     }
 
